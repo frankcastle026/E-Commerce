@@ -1,0 +1,29 @@
+<%- include('partials/header.ejs') %>
+
+<div id="products-section" class="row row-cols-1 row-cols-md-4 g-4">
+  <% for (let item of Products) { %>
+    <% if (item.product_id && customer_id) { %>
+      <div class="col">
+        <div class="card">
+          <div class="card-img-container position-relative">
+            <img src="<%= item.imageurl %>" class="card-img-top" alt="..." style="height: 200px; width: 100%; object-fit: cover; border-radius: 8px;">
+          </div>
+          <div class="card-body">
+            <h3 class="card-title"><%= item.product_name %></h3>
+            <p class="card-text"> ₹<%= item.price %></p>
+          </div>
+  
+          <button class="btn btn-light btn-sm" type="button" onclick="window.location.href='/addToCartAndDelete?product_name=<%= encodeURIComponent(item.product_name) %>&price=<%= encodeURIComponent(item.price) %>&item_id=<%= encodeURIComponent(item.product_id) %>&customer_id=<%= encodeURIComponent(customer_id) %>'">Add to Cart</button>
+          <button class="btn btn-dark btn-sm" type="submit" onclick="window.location.href='/checkout?product_name=<%= encodeURIComponent(item.product_name) %>&price=<%= encodeURIComponent(item.price) %>&item_id=<%= encodeURIComponent(item.product_id) %>&customer_id=<%= encodeURIComponent(customer_id) %>'">Buy Now</button>
+        </div>
+      </div>
+    <% } else { %>
+      <div class="col">
+        <p>Product or Customer ID is missing.</p>
+      </div>
+    <% } %>
+  <% } %>
+  
+  </div>
+
+<%- include('partials/footer.ejs') %>

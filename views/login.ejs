@@ -1,0 +1,36 @@
+<%- include('partials/header.ejs') %>
+
+<div class="container mt-5" style="background-color: #181823; padding: 20px; border-radius: 10px; color: #C0EEF2;">
+    <h1 style="color: #E9F8F9; text-align: center;">Login</h1>
+    <div class="row" style="justify-content: center;">
+        <div class="col-sm-8">
+            <div class="card" style="border: 1px solid #537FE7; border-radius: 10px; background-color: #2A2A3C;">
+                <div class="card-body" style="padding: 20px;">
+
+                    <main class="form-signin w-100 m-auto">
+                        <form action="/login" method="POST">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#C0EEF2" class="bi bi-box-arrow-in-right" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd" d="M6 3.5a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-2a.5.5 0 0 0-1 0v2A1.5 1.5 0 0 0 6.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2h-8A1.5 1.5 0 0 0 5 3.5v2a.5.5 0 0 0 1 0z"/>
+                                <path fill-rule="evenodd" d="M11.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H1.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708z"/>
+                            </svg>
+                            <h1 class="h3 mb-3 fw-normal" style="color: #E9F8F9;">Please sign in</h1>
+
+                            <div class="form-floating" style="margin-bottom: 15px;">
+                                <input type="email" class="form-control" id="floatingInput" name="email" placeholder="name@example.com" style="background-color: #181823; color: #C0EEF2; border: 1px solid #537FE7; border-radius: 5px;">
+                                <label for="floatingInput" style="color: #C0EEF2;">Email address</label>
+                            </div>
+                            <div class="form-floating" style="margin-bottom: 15px;">
+                                <input type="password" class="form-control" id="floatingPassword" name="password" placeholder="Password" style="background-color: #181823; color: #C0EEF2; border: 1px solid #537FE7; border-radius: 5px;">
+                                <label for="floatingPassword" style="color: #C0EEF2;">Password</label>
+                            </div>
+
+                            <button class="btn btn-primary w-100 py-2" type="submit" style="background-color: #537FE7; border: none; border-radius: 5px; color: #E9F8F9;">Login</button>
+                        </form>
+                    </main>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<%- include('partials/footer.ejs') %>
