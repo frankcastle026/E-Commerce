@@ -1,6 +1,7 @@
 import express from "express";
 import bodyParser from "body-parser";
 import pg from "pg";
+import bcrypt from "bcrypt";
 
 const app = express();
 const port = 3000;
@@ -33,58 +34,72 @@ app.get("/register", (req,res) => {
     res.render("register.ejs");
 });
 
-app.post("/register",async (req,res) => {
+app.post("/register", async (req, res) => {
     const email = req.body.email;
     const password = req.body.password;
 
     try {
-        const checkResult = await db.query("SELECT * from ecom_users WHERE email = $1",[email]);
+        // Check if the email already exists
+        const checkResult = await db.query("SELECT * from ecom_users WHERE email = $1", [email]);
 
-        if(checkResult.rows.length > 0){
-            res.send("Email already exists ! Try logging in");
+        if (checkResult.rows.length > 0) {
+            res.status(400).send("Email already exists! Try logging in");
         } else {
-            const addRow = await db.query("INSERT INTO ecom_users(email,password) VALUES($1,$2)",[email,password]);
-            res.send("Successfully registered");
-            console.log(addRow);
-        }
+            // Hash the password
+            const hashedPassword = await bcrypt.hash(password, 10);
 
+            // Insert the new user with the hashed password
+            await db.query("INSERT INTO ecom_users(email, password) VALUES($1, $2)", [email, hashedPassword]);
+
+            res.status(201).send("Successfully registered");
+        }
     } catch (err) {
-        console.log(err);
+        console.error(err);
+        res.status(500).send("An error occurred during registration");
     }
 });
+
 
 app.get("/login", (req,res) => {
     res.render("login.ejs");
 });
 
-app.post("/login",async (req,res) => {
+app.post("/login", async (req, res) => {
     const email = req.body.email;
     const password = req.body.password;
 
-    try {const exists = await db.query("SELECT password from ecom_users WHERE email = $1",[email]);
-        const result = await db.query("SELECT * from products ORDER by id ASC");
-        const items = result.rows;
+    try {
+        // Fetch the user's hashed password from the database
+        const result = await db.query("SELECT id, password FROM ecom_users WHERE email = $1", [email]);
 
-        if(exists.rows.length > 0){
-            if(exists.rows[0].password == password){
-                const c_id = await db.query("SELECT id from ecom_users WHERE email = $1",[email]);
-                const id = c_id.rows[0].id;
+        if (result.rows.length > 0) {
+            const user = result.rows[0];
 
+            // Compare the provided password with the hashed password
+            const isMatch = await bcrypt.compare(password, user.password);
+
+            if (isMatch) {
+                const id = user.id;
+
+                // Fetch wishlist and products
                 const wishlistResult = await db.query("SELECT product_id FROM wishlist WHERE customer_id = $1", [id]);
                 const wishlistItems = wishlistResult.rows.map(row => row.product_id);
-                
-                res.render("home.ejs", {Products : items,customer_id : id, wishlistItems : wishlistItems});
+                const productsResult = await db.query("SELECT * FROM products ORDER BY id ASC");
+                const items = productsResult.rows;
+
+                res.render("home.ejs", { Products: items, customer_id: id, wishlistItems });
             } else {
-                res.send("Password is Incorrect");
+                res.status(401).send("Incorrect password");
             }
         } else {
-            res.send("User Not Found");
+            res.status(404).send("User not found");
         }
-        
     } catch (err) {
-        console.log(err);
+        console.error(err);
+        res.status(500).send("An error occurred during login");
     }
 });
+
 
 app.get('/checkout',async (req, res) => {
     const { product_name, price,item_id, customer_id} = req.query;
