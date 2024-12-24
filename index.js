@@ -69,19 +69,17 @@ app.post("/login", async (req, res) => {
     const password = req.body.password;
 
     try {
-        // Fetch the user's hashed password from the database
         const result = await db.query("SELECT id, password FROM ecom_users WHERE email = $1", [email]);
 
         if (result.rows.length > 0) {
             const user = result.rows[0];
 
-            // Compare the provided password with the hashed password
             const isMatch = await bcrypt.compare(password, user.password);
 
             if (isMatch) {
                 const id = user.id;
 
-                // Fetch wishlist and products
+        
                 const wishlistResult = await db.query("SELECT product_id FROM wishlist WHERE customer_id = $1", [id]);
                 const wishlistItems = wishlistResult.rows.map(row => row.product_id);
                 const productsResult = await db.query("SELECT * FROM products ORDER BY id ASC");
